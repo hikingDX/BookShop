@@ -10,7 +10,7 @@ import org.apache.commons.dbutils.handlers.BeanHandler;
 import cn.itcast.bookstore.user.domain.User;
 
 /**
- * User持久层
+ * User持久层12
  */
 public class UserDao {
     private QueryRunner qr = new TxQueryRunner();
