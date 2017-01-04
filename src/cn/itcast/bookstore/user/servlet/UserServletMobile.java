@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 12222
  * Created by Administrator on 2017/1/3.
  */
 @WebServlet(name = "UserServlet",urlPatterns = {"/UserServlet"})
@@ -119,6 +120,6 @@ public class UserServletMobile extends JsonBaseServlet {
         } catch (UserException e) {
             e.printStackTrace();
         }
-
+        return null;
     }
 }
