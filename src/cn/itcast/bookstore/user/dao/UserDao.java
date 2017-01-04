@@ -9,12 +9,22 @@ import org.apache.commons.dbutils.handlers.BeanHandler;
 
 import cn.itcast.bookstore.user.domain.User;
 
+import javax.print.DocFlavor;
+
 /**
  * User持久层12
  */
 public class UserDao {
     private QueryRunner qr = new TxQueryRunner();
 
+    public User findByToken(String token){
+        try {
+            String sql = "select * from tb_user where code=?";
+            return qr.query(sql, new BeanHandler<User>(User.class), token);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * 插入User
      *

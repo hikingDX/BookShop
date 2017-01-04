@@ -34,11 +34,11 @@ public class UserServletMobile extends JsonBaseServlet {
         //6.保存成功信息转发到msg.jsp
 
         //1.
-//        String n = request.getParameter("n");
-//        String p = request.getParameter("p");
-//        String em = request.getParameter("email");
-        User form = CommonUtils.toBean(request.getParameterMap(), User.class);
-//        User form = new User(n,p,em);
+        String n = request.getParameter("n");
+        String p = request.getParameter("p");
+        String em = request.getParameter("email");
+//        User form = CommonUtils.toBean(request.getParameterMap(), User.class);
+        User form = new User(n,p,em);
 
         form.setUid(CommonUtils.uuid());
         form.setCode(CommonUtils.uuid() + CommonUtils.uuid());
@@ -85,8 +85,9 @@ public class UserServletMobile extends JsonBaseServlet {
             e.printStackTrace();
 //            request.setAttribute("msg", e.getMessage());
 //            request.setAttribute("form", form);
-            Gson gson = new Gson();
-            return gson.toJson("{\"error\":\'fail\'}");
+//            Gson gson = new Gson();
+//            return gson.toJson("{\"error\":\'fail\'}");
+            return "{\'error\':\'fail\'}";
         }
         /**
          * 发邮件
@@ -100,8 +101,9 @@ public class UserServletMobile extends JsonBaseServlet {
          * 1.保存成功信息
          * 2.转发到msg.jsp
          */
-        Gson gson = new Gson();
-        return gson.toJson("{\'msg\':\'resgist success!\'}");
+//        Gson gson = new Gson();
+//        return gson.toJson("{\'msg\':\'resgist success!\'}");
+        return "{\'msg\':\'resgist success!\'}";
     }
 
     public String login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -114,9 +116,10 @@ public class UserServletMobile extends JsonBaseServlet {
         User form = CommonUtils.toBean(request.getParameterMap(),User.class);
         try {
             User user = userService.login(form);
-            HttpSession session = request.getSession();//获取session
-            session.setAttribute("session_user",user);//向session域中保存用户信息
-            return "{}";
+            String token = user.getCode();
+//            HttpSession session = request.getSession();//获取session
+//            session.setAttribute("session_user",user);//向session域中保存用户信息
+            return "{'token':'"+token+"'}";
         } catch (UserException e) {
             e.printStackTrace();
         }
