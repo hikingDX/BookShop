@@ -32,11 +32,11 @@ public class UserServletMobile extends JsonBaseServlet {
         //6.保存成功信息转发到msg.jsp
 
         //1.
-        String n = request.getParameter("n");
-        String p = request.getParameter("p");
-        String em = request.getParameter("email");
-//        User form = CommonUtils.toBean(request.getParameterMap(), User.class);
-        User form = new User(n,p,em);
+//        String n = request.getParameter("n");
+//        String p = request.getParameter("p");
+//        String em = request.getParameter("email");
+        User form = CommonUtils.toBean(request.getParameterMap(), User.class);
+//        User form = new User(n,p,em);
 
         form.setUid(CommonUtils.uuid());
         form.setCode(CommonUtils.uuid() + CommonUtils.uuid());
