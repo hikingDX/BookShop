@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -100,5 +101,24 @@ public class UserServletMobile extends JsonBaseServlet {
          */
         Gson gson = new Gson();
         return gson.toJson("{\'msg\':\'resgist success!\'}");
+    }
+
+    public String login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        /**
+         * 1.封装表单数据到form中
+         * 2.输入校验
+         * 3.调用service完成激活
+         * 4.保存用户信息到session中,然后重定向到index.jsp4.保存用户信息到session中,然后重定向到index.jsp4.保存用户信息到session中,然后重定向到index.jsp4.保存用户信息到session中,然后重定向到index.jsp
+         */
+        User form = CommonUtils.toBean(request.getParameterMap(),User.class);
+        try {
+            User user = userService.login(form);
+            HttpSession session = request.getSession();//获取session
+            session.setAttribute("session_user",user);//向session域中保存用户信息
+            return "{}";
+        } catch (UserException e) {
+            e.printStackTrace();
+        }
+
     }
 }

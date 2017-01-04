@@ -1,10 +1,6 @@
 package cn.itcast.bookstore.user.service;
-
-import java.sql.SQLException;
-
 import cn.itcast.bookstore.user.dao.UserDao;
 import cn.itcast.bookstore.user.domain.User;
-
 /**
  * User业务层
  */
@@ -19,6 +15,30 @@ public class UserService {
         if (user!=null)throw new UserException("email已经注册!");
         //插入用户
         userDao.add(form);
+    }
+
+    /**
+     * 登录功能
+     * @param form
+     * @return
+     */
+    public User login(User form) throws UserException {
+        /*
+        1.使用usename查询,得到User
+        2.如果user为null,抛出异常 用户名不存在
+        3.比较form和user的密码,若不同，抛出异常 密码错误
+        4.查看用户状态，若为false，抛出异常 尚未激活
+        5.返回User
+         */
+        User user = userDao.findByUsername(form.getUsername());
+        if (user == null)throw new UserException("用户名不存在!");
+        if (!user.getPassword().equals(form.getPassword())){
+            throw new UserException("密码错误!");
+        }
+        if (!user.isState()){
+            throw new UserException("尚未激活!");
+        }
+        return user;
     }
 
 }
