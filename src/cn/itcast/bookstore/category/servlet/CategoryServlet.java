@@ -5,13 +5,16 @@ import cn.itcast.bookstore.category.service.CategoryService;
 import cn.itcast.bookstore.user.domain.User;
 import cn.itcast.bookstore.user.service.UserService;
 import cn.itcast.bookstore.user.servlet.JsonBaseServlet;
+import cn.itcast.bookstore.utils.ResultBean;
 import cn.itcast.servlet.BaseServlet;
+import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,19 +31,13 @@ public class CategoryServlet extends JsonBaseServlet{
         if (user==null){
             return "{\"error\":\"没有登陆\"}";
         }
+        List list = new ArrayList();
         List<Category> all = categoryService.findAll();
-        String backStr="[";
-        String[] strAll = new String[all.size()];
-        for (int i=0;i<all.size();i++) {
-            Category item = all.get(i);
-            //'cid':'1001','cname':'n123'
-            String str = "{'cid':'"+item.getCid()+"','cname':'"+item.getCname()+"'}";
-            strAll[i] = str;
-        }
-        for (String str : strAll) {
-            backStr += str+",";
-        }
-        backStr+="]";
-        return backStr;
+        list.add(all);
+        list.add(user);
+        ResultBean resultBean = new ResultBean("success","10001",list);
+        Gson gson = new Gson();
+        String ok = gson.toJson(resultBean);
+        return ok;
     }
 }

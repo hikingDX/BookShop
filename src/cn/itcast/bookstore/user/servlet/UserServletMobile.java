@@ -3,6 +3,8 @@ package cn.itcast.bookstore.user.servlet;
 import cn.itcast.bookstore.user.domain.User;
 import cn.itcast.bookstore.user.service.UserException;
 import cn.itcast.bookstore.user.service.UserService;
+import cn.itcast.bookstore.utils.ErrorBean;
+import cn.itcast.bookstore.utils.ResultBean;
 import cn.itcast.commons.CommonUtils;
 import com.google.gson.Gson;
 
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,36 +47,33 @@ public class UserServletMobile extends JsonBaseServlet {
         form.setCode(CommonUtils.uuid() + CommonUtils.uuid());
         //2.
         /**
-         * 1.创建map，封装错误信息,其中key为表单字段名称,值为错误信息
-         */
-        Map<String, String> errors = new HashMap<>();
-        /**
          * 2.获取form中的username,password,email进行校验
          */
         String username = form.getUsername();
+        ErrorBean errorBean = new ErrorBean();
+        Gson gson = new Gson();
         if (username == null || username.trim().isEmpty()) {
-            errors.put("username", "用户名不能为空!");
+            errorBean.setError("用户名不能为空");
         } else if (username.length() < 3 || username.length() > 10) {
-            errors.put("username", "用户名长度必须在3-10之间!");
+            errorBean.setError("用户名长度必须在3-10之间!");
         }
         String password = form.getPassword();
         if (password == null || password.trim().isEmpty()) {
-            errors.put("password", "密码不能为空!");
+            errorBean.setError("密码不能为空!");
         } else if (password.length() < 3 || password.length() > 10) {
-            errors.put("password", "密码长度必须在3-10之间!");
+            errorBean.setError("密码长度必须在3-10之间!");
         }
         String email = form.getEmail();
         if (email == null || email.trim().isEmpty()) {
-            errors.put("email", "Email不能为空!");
+            errorBean.setError("Email不能为空!");
         } else if (email.matches("\\w+@\\w.\\w")) {
-            errors.put("email", "Email格式错误");
+            errorBean.setError("Email格式错误!");
         }
         /**
          * 3.判断是否存在错误信息
          */
-        if (errors.size() > 0) {
-            Gson gson = new Gson();
-            return gson.toJson(errors);
+        if (errorBean.getError()!=null) {
+            return gson.toJson(errorBean);
         }
         /**
          * 调用service的regist()方法
@@ -83,27 +83,23 @@ public class UserServletMobile extends JsonBaseServlet {
 
         } catch (UserException e) {
             e.printStackTrace();
-//            request.setAttribute("msg", e.getMessage());
-//            request.setAttribute("form", form);
-//            Gson gson = new Gson();
-//            return gson.toJson("{\"error\":\'fail\'}");
-            return "{\'error\':\'fail\'}";
+            errorBean.setError(e.getMessage());
+
+            return gson.toJson(errorBean);
         }
         /**
          * 发邮件
          * 准备配置文件
          */
-//        Properties properties = new Properties();
-//        properties.load(this.getClass().getClassLoader().getResourceAsStream("email_template.properties"));
-//        String host =
+
         /**
          * 执行到这里说明userService执行成功
          * 1.保存成功信息
          * 2.转发到msg.jsp
          */
-//        Gson gson = new Gson();
-//        return gson.toJson("{\'msg\':\'resgist success!\'}");
-        return "{\'msg\':\'resgist success!\'}";
+        ResultBean resultBean = new ResultBean();
+        resultBean.setMsg("resgist success!");
+        return gson.toJson(resultBean);
     }
 
     public String login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -114,12 +110,21 @@ public class UserServletMobile extends JsonBaseServlet {
          * 4.保存用户信息到session中,然后重定向到index.jsp4.保存用户信息到session中,然后重定向到index.jsp4.保存用户信息到session中,然后重定向到index.jsp4.保存用户信息到session中,然后重定向到index.jsp
          */
         User form = CommonUtils.toBean(request.getParameterMap(),User.class);
+        Gson gson = new Gson();
+        ResultBean resultBean = new ResultBean();
+        ErrorBean errorBean = new ErrorBean();
         try {
             User user = userService.login(form);
+            if(user == null){
+                errorBean.setError("login fail");
+                return gson.toJson(errorBean);
+            }
             String token = user.getCode();
-//            HttpSession session = request.getSession();//获取session
-//            session.setAttribute("session_user",user);//向session域中保存用户信息
-            return "{'token':'"+token+"'}";
+
+            resultBean.setMsg("login success");
+            resultBean.setResult("{'token':'"+token+"'}");
+//            return
+            return gson.toJson(resultBean);
         } catch (UserException e) {
             e.printStackTrace();
         }
