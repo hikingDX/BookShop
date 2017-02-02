@@ -102,6 +102,14 @@ public class UserServletMobile extends JsonBaseServlet {
         return gson.toJson(resultBean);
     }
 
+    /**
+     * url=UserServlet?method=login&username=koala&password=123
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     * @throws IOException
+     */
     public String login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         /**
          * 1.封装表单数据到form中
